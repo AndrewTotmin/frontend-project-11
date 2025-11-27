@@ -1,0 +1,26 @@
+name: Node CI
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setap Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install depencies
+        run: make install
+      
+      - name: linting
+        run: make lint
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
