@@ -1,27 +1,15 @@
 {
-  "name": "@hexlet/code",
-  "version": "1.0.0",
-  "description": "This is the third project of the Hexlet educational platform",
-  "homepage": "https://github.com/AndrewTotmin/frontend-project-11#readme",
-  "bugs": {
-    "url": "https://github.com/AndrewTotmin/frontend-project-11/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AndrewTotmin/frontend-project-11.git"
-  },
-  "license": "ISC",
-  "author": "Andrew Totmin",
+  "name": "frontend-project-11",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@eslint/create-config": "^1.11.0",
-    "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin": "^5.6.1",
-    "eslint": "^9.39.1",
-    "globals": "^16.5.0"
+    "vite": "^7.2.4"
   }
 }
