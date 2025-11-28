@@ -6,3 +6,6 @@ lint:
 
 lint-fix:
 	npx eslint . --fix
+
+develop:
+	npm run dev
