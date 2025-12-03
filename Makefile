@@ -9,3 +9,6 @@ lint-fix:
 
 develop:
 	npm run dev
+
+build:
+	npm run build
