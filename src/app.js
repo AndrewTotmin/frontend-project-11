@@ -1,10 +1,6 @@
-// import './style.css'
-// import onChange from 'on-change'
 import * as yup from 'yup'
-
-const form = document.querySelector('.rss-form')
-const input = document.querySelector('#url-input')
-const buttonSubmit = document.querySelector('button[type=submit]')
+import onChange from 'on-change'
+import { renderError } from './view'
 
 const validate = (url, urls) => {
   const schema = yup.object({
@@ -13,12 +9,12 @@ const validate = (url, urls) => {
   return schema
     .validate({ url: url })
     .then(() => null)
-    .catch((e) => e.message)
+    .catch(e => e.message)
 }
 
-const state = {
+const initialState = {
   form: {
-    isValid: null,
+    isValid: true,
     error: null,
   },
   feeds: [],
@@ -29,20 +25,39 @@ const state = {
   // },
 }
 
-form.addEventListener('submit', (e) => {
+const handlerChange = (path) => {
+  if (path.startsWith('form')) {
+    renderError(watchedState, elements)
+  }
+  else {
+    throw new Error(`Unknown path ${path}`)
+  }
+}
+
+const elements = {
+  form: document.querySelector('.rss-form'),
+  input: document.querySelector('#url-input'),
+  submitButton: document.querySelector('button[type=submit]'),
+  feedback: document.querySelector('.feedback'),
+}
+
+elements.form.addEventListener('submit', (e) => {
   e.preventDefault()
 
   const formData = new FormData(e.target)
   const url = formData.get('url').trim()
-  const existingUrls = state.feeds.map((feed) => feed.url)
+  const existingUrls = watchedState.feeds.map(feed => feed.url)
 
   validate(url, existingUrls)
     .then((error) => {
       if (error) {
-        state.form = { isValid: false, error: error }
+        watchedState.form = { isValid: false, error: error }
         return
-      } else {
-        state.form = { isValid: true, error: null }
+      }
+      else {
+        watchedState.form = { isValid: true, error: null }
       }
     })
 })
+
+const watchedState = onChange(initialState, handlerChange)
