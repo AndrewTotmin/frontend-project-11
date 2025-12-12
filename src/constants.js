@@ -1,7 +1,7 @@
 const LOADING_ERRORS = {
-  INVALID_RSS: 'errors.invalidRSS',
-  NETWORK_ERROR: 'errors.networkError',
-  UNKNOWN_ERROR: 'errors.unknownError',
+  INVALID_RSS: 'loadingErrors.invalidRSS',
+  NETWORK_ERROR: 'loadingErrors.networkError',
+  UNKNOWN_ERROR: 'loadingErrors.unknownError',
 }
 
 const STATUS = {
@@ -12,9 +12,9 @@ const STATUS = {
 }
 
 const VALIDATION_ERRORS = {
-  URL: 'errors.url',
-  REQUIRED: 'errors.requiered',
-  NOT_ONE_OF: 'errors.notOneOf',
+  URL: 'validation.url',
+  REQUIRED: 'validation.required',
+  NOT_ONE_OF: 'validation.notOneOf',
 }
 
 export { LOADING_ERRORS, STATUS, VALIDATION_ERRORS }
