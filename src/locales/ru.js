@@ -10,7 +10,7 @@ export default {
       networkError: 'Проблемы с сетью. Не удалось подключиться к серверу',
       unknownError: 'Произошла непредвиденная ошибка приложения',
     },
-    status: {
+    loadingStatus: {
       success: 'RSS успешно загружен',
       loading: 'Загрузка...',
     },
