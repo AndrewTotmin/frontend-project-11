@@ -1,3 +1,10 @@
+const APP_MESSAGES = {
+  STATUS_LOADING: 'loadingStatus.loading',
+  STATUS_SUCCESS: 'loadingStatus.success',
+  ELEMENTS_FEEDS: 'elements.feeds',
+  ELEMENTS_POSTS: 'elements.posts',
+}
+
 const LOADING_ERRORS = {
   INVALID_RSS: 'loadingErrors.invalidRSS',
   NETWORK_ERROR: 'loadingErrors.networkError',
@@ -17,4 +24,4 @@ const VALIDATION_ERRORS = {
   NOT_ONE_OF: 'validation.notOneOf',
 }
 
-export { LOADING_ERRORS, STATUS, VALIDATION_ERRORS }
+export { APP_MESSAGES, LOADING_ERRORS, STATUS, VALIDATION_ERRORS }
