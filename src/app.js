@@ -6,7 +6,7 @@ import onChange from 'on-change'
 
 import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS } from './constants'
 import resources from './locales/index'
-import { renderError, renderFeeds, renderLoadingProcces } from './view'
+import { renderError, renderFeeds, renderPosts, renderLoadingProcces } from './view'
 
 const i18nInstance = i18n.createInstance()
 

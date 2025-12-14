@@ -61,10 +61,74 @@ const renderFeeds = (state, elements, i18nInstance) => {
     li.innerHTML = `
     <h3 class="h6 m-0">${feed.title}</h3>
     <p class="m-0 small text-black-50">${feed.description}</p>`
+
     feedListEl.append(li)
   })
+
   cardBorder.append(cardBody, feedListEl)
   elements.feeds.append(cardBorder)
 }
 
-export { renderError, renderFeeds, renderLoadingProcces }
+const setAttribute = (element, attr) => {
+  Object.entries(attr).forEach(([key, value]) => {
+    element.setAttribute(key, value)
+  })
+}
+
+const renderPosts = (state, elements, i18nInstance) => {
+  elements.posts.innerHTML = ''
+
+  const cardBorder = document.createElement('div')
+  cardBorder.classList.add('card', 'border-0')
+
+  const cardBody = document.createElement('div')
+  cardBody.classList.add('card-body')
+  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENTS_POSTS)}</h2>`
+
+  const postsListEl = document.createElement('ul')
+  postsListEl.classList.add('list-group', 'border-0', 'rounded-0')
+
+  state.posts.forEach((post) => {
+    const li = document.createElement('li')
+    li.classList.add(
+      'list-group-item',
+      'd-flex',
+      'justify-content-between',
+      'align-items-start',
+      'border-0',
+      'border-end-0',
+    )
+
+    const linkEl = document.createElement('a')
+    const linkAttributes = {
+      'href': post.url,
+      'class': 'fw-bold',
+      'data-id': post.id,
+      'target': '_blank',
+      'rel': 'noopener noreferrer',
+    }
+
+    setAttribute(linkEl, linkAttributes)
+    linkEl.textContent = post.title
+
+    const buttonEl = document.createElement('button')
+    const buttonAttribute = {
+      'type': 'button',
+      'class': 'btn btn-outline-primary btn-sm',
+      'data-id': post.id,
+      'data-bs-toggle': 'modal',
+      'data-bs-target': '#modal',
+    }
+
+    setAttribute(buttonEl, buttonAttribute)
+    buttonEl.textContent = i18nInstance.t(APP_MESSAGES.BUTTON_VIEW)
+
+    li.append(linkEl, buttonEl)
+    postsListEl.append(li)
+  })
+
+  cardBorder.append(cardBody, postsListEl)
+  elements.posts.append(cardBorder)
+}
+
+export { renderError, renderFeeds, renderPosts, renderLoadingProcces }
