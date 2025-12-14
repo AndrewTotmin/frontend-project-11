@@ -16,7 +16,10 @@ export default {
     },
     elements: {
       feeds: 'Фиды',
-      Posts: 'Посты',
+      posts: 'Посты',
+    },
+    buttons: {
+      view: 'Просмотр',
     },
   },
 }

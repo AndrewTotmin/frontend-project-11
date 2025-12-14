@@ -1,8 +1,9 @@
 const APP_MESSAGES = {
   STATUS_LOADING: 'loadingStatus.loading',
   STATUS_SUCCESS: 'loadingStatus.success',
-  ELEMENTS_FEEDS: 'elements.feeds',
-  ELEMENTS_POSTS: 'elements.posts',
+  ELEMENT_FEEDS: 'elements.feeds',
+  ELEMENT_POSTS: 'elements.posts',
+  BUTTON_VIEW: 'buttons.view',
 }
 
 const LOADING_ERRORS = {
