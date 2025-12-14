@@ -53,14 +53,26 @@ i18nInstance
     }
 
     const handleChange = (path) => {
-      if (path.startsWith('form')) {
-        renderError(watchedState, elements, i18nInstance)
-      }
-      else if (path.startsWith('loadingProcces')) {
-        renderLoadingProcces(watchedState, elements, i18nInstance)
-      }
-      else {
-        throw new Error(`Unknown path ${path}`)
+      const pathPrefix = path.split('.')[0]
+      switch (pathPrefix) {
+        case 'form':
+          renderError(watchedState, elements, i18nInstance)
+          break
+
+        case 'loadingProcces':
+          renderLoadingProcces(watchedState, elements, i18nInstance)
+          break
+
+        case 'feeds':
+          renderFeeds(watchedState, elements, i18nInstance) // в разработке
+          break
+
+        case 'posts':
+          renderPosts(watchedState, elements, i18nInstance) // в разработке
+          break
+
+        default:
+          throw new Error(`Unknown path ${path}`)
       }
     }
 
@@ -94,14 +106,10 @@ i18nInstance
       }
 
       const feedTitle = parsedData.querySelector('channel > title').textContent
-      const feedDescription = parsedData.querySelector(
-        'channel > description',
-      ).textContent
+      const feedDescription = parsedData.querySelector('channel > description').textContent
       const feed = { title: feedTitle, description: feedDescription, url: url }
 
-      const itemElements = Array.from(
-        parsedData.querySelectorAll('channel > item'),
-      )
+      const itemElements = Array.from(parsedData.querySelectorAll('channel > item'))
       const posts = itemElements.map((post) => {
         return {
           title: post.querySelector('title').textContent,
