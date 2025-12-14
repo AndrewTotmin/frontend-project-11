@@ -49,7 +49,7 @@ const renderFeeds = (state, elements, i18nInstance) => {
 
   const cardBody = document.createElement('div')
   cardBody.classList.add('card-body')
-  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENTS_FEEDS)}</h2>`
+  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENT_FEEDS)}</h2>`
 
   const feedListEl = document.createElement('ul')
   feedListEl.classList.add('list-group', 'border-0', 'rounded-0')
@@ -83,7 +83,7 @@ const renderPosts = (state, elements, i18nInstance) => {
 
   const cardBody = document.createElement('div')
   cardBody.classList.add('card-body')
-  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENTS_POSTS)}</h2>`
+  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENT_POSTS)}</h2>`
 
   const postsListEl = document.createElement('ul')
   postsListEl.classList.add('list-group', 'border-0', 'rounded-0')
