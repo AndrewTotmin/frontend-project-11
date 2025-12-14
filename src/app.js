@@ -6,7 +6,7 @@ import onChange from 'on-change'
 
 import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS } from './constants'
 import resources from './locales/index'
-import { renderError, renderLoadingProcces } from './view'
+import { renderError, renderFeeds, renderLoadingProcces } from './view'
 
 const i18nInstance = i18n.createInstance()
 
@@ -81,6 +81,8 @@ i18nInstance
       input: document.querySelector('#url-input'),
       submitButton: document.querySelector('button[type=submit]'),
       feedback: document.querySelector('.feedback'),
+      feeds: document.querySelector('.feeds'),
+      posts: document.querySelector('.posts'),
     }
 
     const watchedState = onChange(initialState, handleChange)

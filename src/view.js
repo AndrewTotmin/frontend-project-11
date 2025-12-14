@@ -41,4 +41,30 @@ const renderLoadingProcces = (state, elements, i18nInstance) => {
   }
 }
 
-export { renderError, renderLoadingProcces }
+const renderFeeds = (state, elements, i18nInstance) => {
+  elements.feeds.innerHTML = ''
+
+  const cardBorder = document.createElement('div')
+  cardBorder.classList.add('card', 'border-0')
+
+  const cardBody = document.createElement('div')
+  cardBody.classList.add('card-body')
+  cardBody.innerHTML = `<h2 class="card-title h4">${i18nInstance.t(APP_MESSAGES.ELEMENTS_FEEDS)}</h2>`
+
+  const feedListEl = document.createElement('ul')
+  feedListEl.classList.add('list-group', 'border-0', 'rounded-0')
+
+  state.feeds.forEach((feed) => {
+    const li = document.createElement('li')
+    li.classList.add('list-group-item', 'border-0', 'border-end-0')
+
+    li.innerHTML = `
+    <h3 class="h6 m-0">${feed.title}</h3>
+    <p class="m-0 small text-black-50">${feed.description}</p>`
+    feedListEl.append(li)
+  })
+  cardBorder.append(cardBody, feedListEl)
+  elements.feeds.append(cardBorder)
+}
+
+export { renderError, renderFeeds, renderLoadingProcces }
