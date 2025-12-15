@@ -4,7 +4,7 @@ import i18n from 'i18next'
 import _ from 'lodash'
 import onChange from 'on-change'
 
-import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS } from './constants'
+import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS, UPDATE_INTERVAL } from './constants'
 import resources from './locales/index'
 import { renderError, renderFeeds, renderPosts, renderLoadingProcces } from './view'
 
@@ -37,7 +37,7 @@ export default () => {
         return schema
           .validate({ url: url })
           .then(() => null)
-          .catch((e) => e.message)
+          .catch(e => e.message)
       }
 
       const initialState = {
@@ -123,6 +123,17 @@ export default () => {
         return { feed, posts }
       }
 
+      const processAndAddPosts = (posts, feedId, watchedState) => {
+        const existingPostUrls = watchedState.posts.filter(post => post.feedId === feedId).map(post => post.url)
+        const newPosts = posts.filter(newPost => !existingPostUrls.includes(newPost.url))
+        const relatedPosts = newPosts.map((post) => {
+          return { ...post, id: _.uniqueId('post_'), feedId: feedId }
+        })
+        if (relatedPosts.length > 0) {
+          watchedState.posts.push(...relatedPosts)
+        }
+      }
+
       const handleLoadingError = (error, watchedState) => {
         console.log(error)
 
@@ -130,9 +141,11 @@ export default () => {
 
         if (axios.isAxiosError(error)) {
           errorCode = LOADING_ERRORS.NETWORK_ERROR
-        } else if (error.message === LOADING_ERRORS.INVALID_RSS) {
+        }
+        else if (error.message === LOADING_ERRORS.INVALID_RSS) {
           errorCode = LOADING_ERRORS.INVALID_RSS
-        } else {
+        }
+        else {
           errorCode = LOADING_ERRORS.UNKNOWN_ERROR
         }
         watchedState.loadingProcces = { status: STATUS.ERROR, error: errorCode }
@@ -151,19 +164,35 @@ export default () => {
             feed.id = _.uniqueId('feed_')
             watchedState.feeds.push(feed)
 
-            const relatedPosts = posts.map((post) => {
-              return {
-                ...post,
-                id: _.uniqueId('post_'),
-                feedId: feed.id,
-              }
-            })
-            watchedState.posts.push(...relatedPosts)
+            processAndAddPosts(posts, feed.id, watchedState)
             watchedState.loadingProcces.status = STATUS.SUCCESS
+            updateData(watchedState)
           })
           .catch((error) => {
             handleLoadingError(error, watchedState)
           })
+      }
+
+      const fetchAndProcessFeed = (feed) => {
+        const proxyUrl = getProxyUrl(feed.url)
+        axios
+          .get(proxyUrl)
+          .then((response) => {
+            const { posts } = extractData(response.data.contents, feed.url)
+            processAndAddPosts(posts, feed.id, watchedState)
+          })
+          .catch((error) => {
+            console.error(`Error during feed update ${feed.url}`, error)
+          })
+          .finally(() => {
+            setTimeout(() => fetchAndProcessFeed(feed), UPDATE_INTERVAL)
+          })
+      }
+
+      const updateData = (watchedState) => {
+        watchedState.feeds.forEach((feed) => {
+          setTimeout(() => fetchAndProcessFeed(feed), UPDATE_INTERVAL)
+        })
       }
 
       elements.form.addEventListener('submit', (e) => {
@@ -171,13 +200,14 @@ export default () => {
 
         const formData = new FormData(e.target)
         const url = formData.get('url').trim()
-        const existingUrls = watchedState.feeds.map((feed) => feed.url)
+        const existingUrls = watchedState.feeds.map(feed => feed.url)
 
         validate(url, existingUrls).then((errorKey) => {
           if (errorKey) {
             watchedState.form = { isValid: false, error: errorKey }
             return
-          } else {
+          }
+          else {
             watchedState.form = { isValid: true, error: null }
             loadData(url)
             elements.form.reset()
