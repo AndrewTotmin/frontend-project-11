@@ -20,6 +20,8 @@ export default {
     },
     buttons: {
       view: 'Просмотр',
+      modalRead: 'Читать полностью',
+      modalClose: 'Закрыть',
     },
   },
 }

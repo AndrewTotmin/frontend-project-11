@@ -133,4 +133,18 @@ const renderPosts = (state, elements, i18nInstance) => {
   elements.posts.append(cardBorder)
 }
 
-export { renderError, renderFeeds, renderPosts, renderLoadingProcces }
+const renderModal = (post, modalElement, i18nInstance) => {
+  const modalTitleEl = modalElement.querySelector('.modal-title')
+  const modalBodyEl = modalElement.querySelector('.modal-body')
+  const modalLinkEl = modalElement.querySelector('.full-article')
+  const modalButtonClose = modalElement.querySelector('.modal-footer > [data-bs-dismiss="modal"]')
+
+  modalTitleEl.textContent = post.title
+  modalBodyEl.textContent = post.description
+  modalLinkEl.href = post.url
+
+  modalLinkEl.textContent = i18nInstance.t(APP_MESSAGES.MODAL_READ)
+  modalButtonClose.textContent = i18nInstance.t(APP_MESSAGES.MODAL_CLOSE)
+}
+
+export { renderError, renderFeeds, renderModal, renderPosts, renderLoadingProcces }

@@ -4,6 +4,8 @@ const APP_MESSAGES = {
   ELEMENT_FEEDS: 'elements.feeds',
   ELEMENT_POSTS: 'elements.posts',
   BUTTON_VIEW: 'buttons.view',
+  MODAL_READ: 'buttons.modalRead',
+  MODAL_CLOSE: 'buttons.modalClose',
 }
 
 const LOADING_ERRORS = {

@@ -6,7 +6,7 @@ import onChange from 'on-change'
 
 import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS, UPDATE_INTERVAL } from './constants'
 import resources from './locales/index'
-import { renderError, renderFeeds, renderPosts, renderLoadingProcces } from './view'
+import { renderError, renderFeeds, renderPosts, renderModal, renderLoadingProcces } from './view'
 
 export default () => {
   const i18nInstance = i18n.createInstance()
@@ -84,6 +84,7 @@ export default () => {
         feedback: document.querySelector('.feedback'),
         feeds: document.querySelector('.feeds'),
         posts: document.querySelector('.posts'),
+        modal: document.querySelector('#modal'),
       }
 
       const watchedState = onChange(initialState, handleChange)
@@ -214,6 +215,18 @@ export default () => {
             elements.input.focus()
           }
         })
+      })
+
+      elements.posts.addEventListener('click', (e) => {
+        const postId = e.target.dataset.id
+
+        if (!postId) return
+
+        const post = watchedState.posts.find(post => postId === post.id)
+
+        if (!post) return
+
+        renderModal(post, elements.modal, i18nInstance)
       })
     })
     .catch((error) => {
