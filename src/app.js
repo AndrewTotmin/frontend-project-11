@@ -131,7 +131,7 @@ export default () => {
           return { ...post, id: _.uniqueId('post_'), feedId: feedId }
         })
         if (relatedPosts.length > 0) {
-          watchedState.posts.push(...relatedPosts)
+          watchedState.posts.unshift(...relatedPosts)
         }
       }
 
