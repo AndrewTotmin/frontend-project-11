@@ -6,7 +6,7 @@ import onChange from 'on-change'
 
 import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS, UPDATE_INTERVAL } from './constants'
 import resources from './locales/index'
-import { renderError, renderFeeds, renderPosts, renderModal, renderLoadingProcces } from './view'
+import { renderError, renderFeeds, renderPosts, renderModal, renderLoadingProcess } from './view'
 
 export default () => {
   const i18nInstance = i18n.createInstance()
@@ -37,7 +37,7 @@ export default () => {
         return schema
           .validate({ url: url })
           .then(() => null)
-          .catch(e => e.message)
+          .catch((e) => e.message)
       }
 
       const initialState = {
@@ -45,7 +45,7 @@ export default () => {
           isValid: true,
           error: null,
         },
-        loadingProcces: {
+        loadingProcess: {
           status: STATUS.IDLE,
           error: null,
         },
@@ -60,8 +60,8 @@ export default () => {
             renderError(watchedState, elements, i18nInstance)
             break
 
-          case 'loadingProcces':
-            renderLoadingProcces(watchedState, elements, i18nInstance)
+          case 'loadingProcess':
+            renderLoadingProcess(watchedState, elements, i18nInstance)
             break
 
           case 'feeds':
@@ -94,7 +94,7 @@ export default () => {
         return parser.parseFromString(data, 'application/xml')
       }
 
-      const getProxyUrl = (url) => {
+      const makeProxyUrl = (url) => {
         const allOrigins = 'https://allorigins.hexlet.app/get'
         const proxyBaseUrl = new URL(allOrigins)
         proxyBaseUrl.searchParams.set('disableCache', 'true')
@@ -125,8 +125,8 @@ export default () => {
       }
 
       const processAndAddPosts = (posts, feedId, watchedState) => {
-        const existingPostUrls = watchedState.posts.filter(post => post.feedId === feedId).map(post => post.url)
-        const newPosts = posts.filter(newPost => !existingPostUrls.includes(newPost.url))
+        const existingPostUrls = watchedState.posts.filter((post) => post.feedId === feedId).map((post) => post.url)
+        const newPosts = posts.filter((newPost) => !existingPostUrls.includes(newPost.url))
         const relatedPosts = newPosts.map((post) => {
           return { ...post, id: _.uniqueId('post_'), feedId: feedId }
         })
@@ -142,20 +142,18 @@ export default () => {
 
         if (axios.isAxiosError(error)) {
           errorCode = LOADING_ERRORS.NETWORK_ERROR
-        }
-        else if (error.message === LOADING_ERRORS.INVALID_RSS) {
+        } else if (error.message === LOADING_ERRORS.INVALID_RSS) {
           errorCode = LOADING_ERRORS.INVALID_RSS
-        }
-        else {
+        } else {
           errorCode = LOADING_ERRORS.UNKNOWN_ERROR
         }
-        watchedState.loadingProcces = { status: STATUS.ERROR, error: errorCode }
+        watchedState.loadingProcess = { status: STATUS.ERROR, error: errorCode }
       }
 
       const loadData = (url) => {
-        watchedState.loadingProcces.status = STATUS.LOADING
+        watchedState.loadingProcess.status = STATUS.LOADING
 
-        const proxyUrl = getProxyUrl(url)
+        const proxyUrl = makeProxyUrl(url)
 
         axios
           .get(proxyUrl)
@@ -166,7 +164,7 @@ export default () => {
             watchedState.feeds.push(feed)
 
             processAndAddPosts(posts, feed.id, watchedState)
-            watchedState.loadingProcces.status = STATUS.SUCCESS
+            watchedState.loadingProcess.status = STATUS.SUCCESS
             updateData(watchedState)
           })
           .catch((error) => {
@@ -175,7 +173,7 @@ export default () => {
       }
 
       const fetchAndProcessFeed = (feed) => {
-        const proxyUrl = getProxyUrl(feed.url)
+        const proxyUrl = makeProxyUrl(feed.url)
         axios
           .get(proxyUrl)
           .then((response) => {
@@ -201,18 +199,15 @@ export default () => {
 
         const formData = new FormData(e.target)
         const url = formData.get('url').trim()
-        const existingUrls = watchedState.feeds.map(feed => feed.url)
+        const existingUrls = watchedState.feeds.map((feed) => feed.url)
 
         validate(url, existingUrls).then((errorKey) => {
           if (errorKey) {
             watchedState.form = { isValid: false, error: errorKey }
             return
-          }
-          else {
+          } else {
             watchedState.form = { isValid: true, error: null }
             loadData(url)
-            elements.form.reset()
-            elements.input.focus()
           }
         })
       })
@@ -222,7 +217,7 @@ export default () => {
 
         if (!postId) return
 
-        const post = watchedState.posts.find(post => postId === post.id)
+        const post = watchedState.posts.find((post) => postId === post.id)
 
         if (!post) return
 
