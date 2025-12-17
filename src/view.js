@@ -1,21 +1,24 @@
 import { APP_MESSAGES, STATUS } from './constants'
 
-const renderError = (state, elements, i18nInstance) => {
+const resetFeedbackElementClasses = (elements) => {
   elements.feedback.classList.remove('text-danger', 'text-success', 'text-info')
+}
+
+const renderError = (state, elements, i18nInstance) => {
+  resetFeedbackElementClasses(elements)
   if (state.form.isValid) {
     elements.input.classList.remove('is-invalid')
     elements.feedback.textContent = ''
-  }
-  else {
+  } else {
     elements.input.classList.add('is-invalid')
     elements.feedback.classList.add('text-danger')
     elements.feedback.textContent = i18nInstance.t(state.form.error)
   }
 }
 
-const renderLoadingProcces = (state, elements, i18nInstance) => {
-  elements.feedback.classList.remove('text-danger', 'text-success', 'text-info')
-  switch (state.loadingProcces.status) {
+const renderLoadingProcess = (state, elements, i18nInstance) => {
+  resetFeedbackElementClasses(elements)
+  switch (state.loadingProcess.status) {
     case STATUS.LOADING:
       elements.submitButton.disabled = true
       elements.feedback.classList.add('text-info')
@@ -26,12 +29,14 @@ const renderLoadingProcces = (state, elements, i18nInstance) => {
       elements.submitButton.disabled = false
       elements.feedback.classList.add('text-success')
       elements.feedback.textContent = i18nInstance.t(APP_MESSAGES.STATUS_SUCCESS)
+      elements.form.reset()
+      elements.input.focus()
       break
 
     case STATUS.ERROR:
       elements.submitButton.disabled = false
       elements.feedback.classList.add('text-danger')
-      elements.feedback.textContent = i18nInstance.t(state.loadingProcces.error)
+      elements.feedback.textContent = i18nInstance.t(state.loadingProcess.error)
       break
 
     case STATUS.IDLE:
@@ -39,7 +44,7 @@ const renderLoadingProcces = (state, elements, i18nInstance) => {
       break
 
     default:
-      throw new Error(`Unknown status: ${state.loadingProcces.status}`)
+      throw new Error(`Unknown status: ${state.loadingProcess.status}`)
   }
 }
 
@@ -103,11 +108,11 @@ const renderPosts = (state, elements, i18nInstance) => {
 
     const linkEl = document.createElement('a')
     const linkAttributes = {
-      'href': post.url,
-      'class': 'fw-bold',
+      href: post.url,
+      class: 'fw-bold',
       'data-id': post.id,
-      'target': '_blank',
-      'rel': 'noopener noreferrer',
+      target: '_blank',
+      rel: 'noopener noreferrer',
     }
 
     setAttribute(linkEl, linkAttributes)
@@ -115,8 +120,8 @@ const renderPosts = (state, elements, i18nInstance) => {
 
     const buttonEl = document.createElement('button')
     const buttonAttribute = {
-      'type': 'button',
-      'class': 'btn btn-outline-primary btn-sm',
+      type: 'button',
+      class: 'btn btn-outline-primary btn-sm',
       'data-id': post.id,
       'data-bs-toggle': 'modal',
       'data-bs-target': '#modal',
@@ -147,4 +152,4 @@ const renderModal = (post, modalElement, i18nInstance) => {
   modalButtonClose.textContent = i18nInstance.t(APP_MESSAGES.MODAL_CLOSE)
 }
 
-export { renderError, renderFeeds, renderModal, renderPosts, renderLoadingProcces }
+export { renderError, renderFeeds, renderModal, renderPosts, renderLoadingProcess }
