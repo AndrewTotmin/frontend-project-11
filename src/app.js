@@ -37,7 +37,7 @@ export default () => {
         return schema
           .validate({ url: url })
           .then(() => null)
-          .catch((e) => e.message)
+          .catch(e => e.message)
       }
 
       const initialState = {
@@ -51,6 +51,7 @@ export default () => {
         },
         feeds: [],
         posts: [],
+        seenPosts: new Set(),
       }
 
       const handleChange = (path) => {
@@ -69,6 +70,7 @@ export default () => {
             break
 
           case 'posts':
+          case 'seenPosts':
             renderPosts(watchedState, elements, i18nInstance)
             break
 
@@ -125,8 +127,8 @@ export default () => {
       }
 
       const processAndAddPosts = (posts, feedId, watchedState) => {
-        const existingPostUrls = watchedState.posts.filter((post) => post.feedId === feedId).map((post) => post.url)
-        const newPosts = posts.filter((newPost) => !existingPostUrls.includes(newPost.url))
+        const existingPostUrls = watchedState.posts.filter(post => post.feedId === feedId).map(post => post.url)
+        const newPosts = posts.filter(newPost => !existingPostUrls.includes(newPost.url))
         const relatedPosts = newPosts.map((post) => {
           return { ...post, id: _.uniqueId('post_'), feedId: feedId }
         })
@@ -142,9 +144,11 @@ export default () => {
 
         if (axios.isAxiosError(error)) {
           errorCode = LOADING_ERRORS.NETWORK_ERROR
-        } else if (error.message === LOADING_ERRORS.INVALID_RSS) {
+        }
+        else if (error.message === LOADING_ERRORS.INVALID_RSS) {
           errorCode = LOADING_ERRORS.INVALID_RSS
-        } else {
+        }
+        else {
           errorCode = LOADING_ERRORS.UNKNOWN_ERROR
         }
         watchedState.loadingProcess = { status: STATUS.ERROR, error: errorCode }
@@ -199,13 +203,14 @@ export default () => {
 
         const formData = new FormData(e.target)
         const url = formData.get('url').trim()
-        const existingUrls = watchedState.feeds.map((feed) => feed.url)
+        const existingUrls = watchedState.feeds.map(feed => feed.url)
 
         validate(url, existingUrls).then((errorKey) => {
           if (errorKey) {
             watchedState.form = { isValid: false, error: errorKey }
             return
-          } else {
+          }
+          else {
             watchedState.form = { isValid: true, error: null }
             loadData(url)
           }
@@ -214,14 +219,13 @@ export default () => {
 
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id
-
         if (!postId) return
 
-        const post = watchedState.posts.find((post) => postId === post.id)
-
+        const post = watchedState.posts.find(post => postId === post.id)
         if (!post) return
 
         renderModal(post, elements.modal, i18nInstance)
+        watchedState.seenPosts = new Set([...watchedState.seenPosts, postId])
       })
     })
     .catch((error) => {

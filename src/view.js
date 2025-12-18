@@ -9,7 +9,8 @@ const renderError = (state, elements, i18nInstance) => {
   if (state.form.isValid) {
     elements.input.classList.remove('is-invalid')
     elements.feedback.textContent = ''
-  } else {
+  }
+  else {
     elements.input.classList.add('is-invalid')
     elements.feedback.classList.add('text-danger')
     elements.feedback.textContent = i18nInstance.t(state.form.error)
@@ -105,14 +106,15 @@ const renderPosts = (state, elements, i18nInstance) => {
       'border-0',
       'border-end-0',
     )
+    const isSeen = state.seenPosts.has(post.id)
 
     const linkEl = document.createElement('a')
     const linkAttributes = {
-      href: post.url,
-      class: 'fw-bold',
+      'href': post.url,
+      'class': isSeen ? 'fw-normal' : 'fw-bold',
       'data-id': post.id,
-      target: '_blank',
-      rel: 'noopener noreferrer',
+      'target': '_blank',
+      'rel': 'noopener noreferrer',
     }
 
     setAttribute(linkEl, linkAttributes)
@@ -120,8 +122,8 @@ const renderPosts = (state, elements, i18nInstance) => {
 
     const buttonEl = document.createElement('button')
     const buttonAttribute = {
-      type: 'button',
-      class: 'btn btn-outline-primary btn-sm',
+      'type': 'button',
+      'class': 'btn btn-outline-primary btn-sm',
       'data-id': post.id,
       'data-bs-toggle': 'modal',
       'data-bs-target': '#modal',
