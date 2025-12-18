@@ -8,6 +8,40 @@ import { LOADING_ERRORS, STATUS, VALIDATION_ERRORS, UPDATE_INTERVAL } from './co
 import resources from './locales/index'
 import { renderError, renderFeeds, renderPosts, renderModal, renderLoadingProcess } from './view'
 
+const parseData = (data) => {
+  const parser = new DOMParser()
+  return parser.parseFromString(data, 'application/xml')
+}
+
+const makeProxyUrl = (url) => {
+  const allOrigins = 'https://allorigins.hexlet.app/get'
+  const proxyBaseUrl = new URL(allOrigins)
+  proxyBaseUrl.searchParams.set('disableCache', 'true')
+  proxyBaseUrl.searchParams.set('url', url)
+  return proxyBaseUrl.toString()
+}
+
+const extractData = (data, url) => {
+  const parsedData = parseData(data)
+  if (parsedData.querySelector('parsererror')) {
+    throw new Error(LOADING_ERRORS.INVALID_RSS)
+  }
+
+  const feedTitle = parsedData.querySelector('channel > title').textContent
+  const feedDescription = parsedData.querySelector('channel > description').textContent
+  const feed = { title: feedTitle, description: feedDescription, url: url }
+
+  const itemElements = Array.from(parsedData.querySelectorAll('channel > item'))
+  const posts = itemElements.map((post) => {
+    return {
+      title: post.querySelector('title').textContent,
+      description: post.querySelector('description').textContent,
+      url: post.querySelector('link').textContent,
+    }
+  })
+  return { feed, posts }
+}
+
 export default () => {
   const i18nInstance = i18n.createInstance()
 
@@ -91,42 +125,7 @@ export default () => {
 
       const watchedState = onChange(initialState, handleChange)
 
-      const parseData = (data) => {
-        const parser = new DOMParser()
-        return parser.parseFromString(data, 'application/xml')
-      }
-
-      const makeProxyUrl = (url) => {
-        const allOrigins = 'https://allorigins.hexlet.app/get'
-        const proxyBaseUrl = new URL(allOrigins)
-        proxyBaseUrl.searchParams.set('disableCache', 'true')
-        proxyBaseUrl.searchParams.set('url', url)
-        return proxyBaseUrl.toString()
-      }
-
-      const extractData = (data, url) => {
-        const parsedData = parseData(data)
-
-        if (parsedData.querySelector('parsererror')) {
-          throw new Error(LOADING_ERRORS.INVALID_RSS)
-        }
-
-        const feedTitle = parsedData.querySelector('channel > title').textContent
-        const feedDescription = parsedData.querySelector('channel > description').textContent
-        const feed = { title: feedTitle, description: feedDescription, url: url }
-
-        const itemElements = Array.from(parsedData.querySelectorAll('channel > item'))
-        const posts = itemElements.map((post) => {
-          return {
-            title: post.querySelector('title').textContent,
-            description: post.querySelector('description').textContent,
-            url: post.querySelector('link').textContent,
-          }
-        })
-        return { feed, posts }
-      }
-
-      const processAndAddPosts = (posts, feedId, watchedState) => {
+      const processAndAddPosts = (posts, feedId) => {
         const existingPostUrls = watchedState.posts.filter(post => post.feedId === feedId).map(post => post.url)
         const newPosts = posts.filter(newPost => !existingPostUrls.includes(newPost.url))
         const relatedPosts = newPosts.map((post) => {
@@ -137,8 +136,8 @@ export default () => {
         }
       }
 
-      const handleLoadingError = (error, watchedState) => {
-        console.log(error)
+      const handleLoadingError = (error) => {
+        console.error(error)
 
         let errorCode
 
@@ -167,12 +166,12 @@ export default () => {
             feed.id = _.uniqueId('feed_')
             watchedState.feeds.push(feed)
 
-            processAndAddPosts(posts, feed.id, watchedState)
+            processAndAddPosts(posts, feed.id)
             watchedState.loadingProcess.status = STATUS.SUCCESS
-            updateData(watchedState)
+            updateData()
           })
           .catch((error) => {
-            handleLoadingError(error, watchedState)
+            handleLoadingError(error)
           })
       }
 
@@ -182,7 +181,7 @@ export default () => {
           .get(proxyUrl)
           .then((response) => {
             const { posts } = extractData(response.data.contents, feed.url)
-            processAndAddPosts(posts, feed.id, watchedState)
+            processAndAddPosts(posts, feed.id)
           })
           .catch((error) => {
             console.error(`Error during feed update ${feed.url}`, error)
@@ -192,7 +191,7 @@ export default () => {
           })
       }
 
-      const updateData = (watchedState) => {
+      const updateData = () => {
         watchedState.feeds.forEach((feed) => {
           setTimeout(() => fetchAndProcessFeed(feed), UPDATE_INTERVAL)
         })
