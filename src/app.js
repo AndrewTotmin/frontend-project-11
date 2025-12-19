@@ -125,6 +125,10 @@ export default () => {
 
       const watchedState = onChange(initialState, handleChange)
 
+      elements.modal.addEventListener('hide.bs.modal', () => {
+        document.activeElement?.blur()
+      })
+
       const processAndAddPosts = (posts, feedId) => {
         const existingPostUrls = watchedState.posts.filter(post => post.feedId === feedId).map(post => post.url)
         const newPosts = posts.filter(newPost => !existingPostUrls.includes(newPost.url))
