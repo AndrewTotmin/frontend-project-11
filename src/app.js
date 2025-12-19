@@ -168,7 +168,8 @@ export default () => {
 
             processAndAddPosts(posts, feed.id)
             watchedState.loadingProcess.status = STATUS.SUCCESS
-            updateData()
+
+            fetchAndProcessFeed(feed)
           })
           .catch((error) => {
             handleLoadingError(error)
@@ -189,12 +190,6 @@ export default () => {
           .finally(() => {
             setTimeout(() => fetchAndProcessFeed(feed), UPDATE_INTERVAL)
           })
-      }
-
-      const updateData = () => {
-        watchedState.feeds.forEach((feed) => {
-          setTimeout(() => fetchAndProcessFeed(feed), UPDATE_INTERVAL)
-        })
       }
 
       elements.form.addEventListener('submit', (e) => {
